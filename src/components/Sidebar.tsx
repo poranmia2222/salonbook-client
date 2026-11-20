@@ -30,7 +30,7 @@ interface NavItem {
 const CUSTOMER_NAV: NavItem[] = [
   { href: "/dashboard/customer", label: "Overview", icon: LayoutDashboard },
   {
-    href: "/dashboard/customer/appointments",
+    href: "/dashboard/customer/my-appointments",
     label: "My Appointments",
     icon: Calendar,
   },

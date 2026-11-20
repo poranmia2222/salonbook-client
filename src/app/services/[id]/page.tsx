@@ -11,7 +11,7 @@ import {
   Clock3,
   Star,
 } from "lucide-react"
-import { useEffect, useState, type FormEvent } from "react"
+import { Suspense, use, useEffect, useState, type FormEvent } from "react"
 import {
   Card,
   CardContent,
@@ -26,11 +26,35 @@ import { useSession } from "@/lib/auth-client"
 import { useToast } from "@/components/ui/use-toast"
 import { bookAppointment } from "@/lib/action/appointment"
 
+function ServiceLoading() {
+  return (
+    <div className="bg-background min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-8 w-32 rounded-full bg-secondary animate-pulse" />
+        <p className="text-sm text-muted-foreground">Loading service...</p>
+      </div>
+    </div>
+  )
+}
+
 export default function ServiceDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
+  return (
+    <Suspense fallback={<ServiceLoading />}>
+      <ServiceDetailsContent params={params} />
+    </Suspense>
+  )
+}
+
+function ServiceDetailsContent({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params)
   const [service, setService] = useState<Service | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +73,6 @@ export default function ServiceDetailsPage({
     let mounted = true
     const fetchService = async () => {
       try {
-        const { id } = await params
         const data = await getServiceById(id)
         if (mounted) {
           setService(data)
@@ -69,17 +92,10 @@ export default function ServiceDetailsPage({
     return () => {
       mounted = false
     }
-  }, [params])
+  }, [id])
 
   if (loading) {
-    return (
-      <div className="bg-background min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-32 rounded-full bg-secondary animate-pulse" />
-          <p className="text-sm text-muted-foreground">Loading service...</p>
-        </div>
-      </div>
-    )
+    return <ServiceLoading />
   }
 
   if (error || !service) {
@@ -141,6 +157,7 @@ export default function ServiceDetailsPage({
     userEmail: user.email,
     totalPrice: effectivePrice,
     status: "pending",
+    payment: 'unpaid'
   };
 
   try {

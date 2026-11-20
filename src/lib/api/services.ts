@@ -10,3 +10,8 @@ export const getServiceById = async (id: string): Promise<Service | undefined> =
     const services = await fetch(`${BASE_URL}/services/${id}`)
     return services.json()
 }
+
+export async function getMyApplications(query = ""): Promise<Application[]> {
+    const res = await fetch(`${BASE_URL}/application?${query}`)
+    return res.json()
+}

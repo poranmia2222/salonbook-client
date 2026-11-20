@@ -1,16 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense } from "react"
+import { usePathname } from "next/navigation"
 import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 
 export default function Chrome({ children }: { children: React.ReactNode }) {
-  const [isDashboard, setIsDashboard] = useState(false)
+  return (
+    <Suspense fallback={children}>
+      <ChromeContent>{children}</ChromeContent>
+    </Suspense>
+  )
+}
 
-  useEffect(() => {
-    setIsDashboard(typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard"))
-  }, [])
-
+function ChromeContent({ children }: { children: React.ReactNode }) {
+  const isDashboard = usePathname().startsWith("/dashboard")
   return (
     <>
       {!isDashboard && <Navbar />}

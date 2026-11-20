@@ -19,3 +19,7 @@ export interface Service {
   featured: boolean;
   tags: string[];
 }
+
+export interface Appointment{
+  
+}
