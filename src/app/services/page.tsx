@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { getServices } from "@/lib/api/services"
 import { ServiceCard } from "@/components/ui/service-card"
 import { Service } from "@/lib/types/service"
@@ -8,6 +8,8 @@ import { Service } from "@/lib/types/service"
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
+  const [sortBy, setSortBy] = useState<string>("default")
 
   useEffect(() => {
     let mounted = true
@@ -27,6 +29,27 @@ export default function ServicesPage() {
       mounted = false
     }
   }, [])
+
+  const categories = useMemo(
+    () => ["all", ...Array.from(new Set(services.map((s) => s.category)))],
+    [services]
+  )
+
+  const filteredAndSortedServices = useMemo(() => {
+    let result = services
+
+    if (categoryFilter !== "all") {
+      result = result.filter((s) => s.category === categoryFilter)
+    }
+
+    if (sortBy === "price-low") {
+      result = [...result].sort((a, b) => a.price - b.price)
+    } else if (sortBy === "price-high") {
+      result = [...result].sort((a, b) => b.price - a.price)
+    }
+
+    return result
+  }, [services, categoryFilter, sortBy])
 
   if (loading) {
     return (
@@ -53,8 +76,38 @@ export default function ServicesPage() {
           </p>
         </div>
 
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="relative w-full sm:w-auto max-w-md">
+            <input
+              type="text"
+              placeholder="Search services..."
+              className="w-full h-10 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="h-10 rounded-md border border-input bg-background px-3 py-1 text-sm"
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="h-10 rounded-md border border-input bg-background px-3 py-1 text-sm"
+          >
+            <option value="default">Sort by Default</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
+          {filteredAndSortedServices.map((service) => (
             <ServiceCard key={service._id} service={service} />
           ))}
         </div>
