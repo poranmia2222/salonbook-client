@@ -50,7 +50,7 @@ const ADMIN_NAV: NavItem[] = [
     icon: Plus,
   },
   {
-    href: "/dashboard/admin/appointments",
+    href: "/dashboard/admin/manage-appointment",
     label: "Manage Appointments",
     icon: Calendar,
   },
