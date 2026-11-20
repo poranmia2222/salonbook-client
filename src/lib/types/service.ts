@@ -32,4 +32,5 @@ export interface Appointment extends Service {
   status: "pending" | "confirmed" | "cancelled"
   payment: "unpaid" | "paid";
   createdAt?: string;
+  message?: string;
 }

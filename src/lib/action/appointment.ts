@@ -33,3 +33,14 @@ export const deleteAppointment = async (appointmentId: string) => {
   })
   return res.json()
 }
+
+export const updateAppointment = async (appointmentId: string, status:string) =>{
+  const res = await fetch(`${BASE_URL}/appointment/${appointmentId}`,{
+    method: "PATCH",
+    headers:{
+      "Content-Type":'application/json'
+    },
+    body:JSON.stringify({status})
+  })
+  return res.json()
+}

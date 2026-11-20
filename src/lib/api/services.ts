@@ -68,7 +68,12 @@ export async function getMyAppointments(query = ""): Promise<Appointment[]> {
 }
 
 
-export async function getAppointment(){
-    const res = await fetch(`${BASE_URL}/appointments`)
-    return res.json()
+export async function getAppointment(): Promise<Appointment[]> {
+    const appointments = await requestServiceJson<Appointment[]>("appointments");
+
+    if (!Array.isArray(appointments)) {
+        throw new Error("The appointments server returned an invalid response.");
+    }
+
+    return appointments;
 }
