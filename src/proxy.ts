@@ -1,27 +1,15 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { getSessionCookie } from "better-auth/cookies"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
 export function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  // Protect only /services/[id]
-  const isPrivateRoute = /^\/services\/[^/]+$/.test(pathname);
-
-  if (isPrivateRoute && !getSessionCookie(request)) {
-    const url = new URL("/sign-in", request.url);
-
-    url.searchParams.set(
-      "callbackUrl",
-      pathname + request.nextUrl.search
-    );
-
-    return NextResponse.redirect(url);
+  if (getSessionCookie(request)) {
+    return NextResponse.next()
   }
 
-  return NextResponse.next();
+  return NextResponse.redirect(new URL("/sign-in", request.url))
 }
 
 export const config = {
-  matcher: ["/services/:path*"],
-};
+  matcher: ["/services/:id"],
+}

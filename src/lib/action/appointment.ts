@@ -1,3 +1,4 @@
+import { methods } from "better-auth/react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -23,4 +24,12 @@ export async function bookAppointment(data: Record<string, unknown>) {
   }
 
   return result;
+}
+
+
+export const deleteAppointment = async (appointmentId: string) => {
+  const res = await fetch(`${BASE_URL}/appointment/${appointmentId}`, {
+    method: "DELETE"
+  })
+  return res.json()
 }

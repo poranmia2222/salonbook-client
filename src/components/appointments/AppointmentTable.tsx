@@ -1,3 +1,4 @@
+'use client'
 import { CalendarDays, CreditCard, Eye, Scissors, X } from "lucide-react"
 import type { Appointment } from "@/lib/types/service"
 import { Badge, type badgeVariants } from "@/components/ui/badge"
@@ -19,7 +20,8 @@ import {
 import type { VariantProps } from "class-variance-authority"
 import { Button, buttonVariants } from "@/components/ui/button"
 import Link from "next/link"
-
+import { deleteAppointment } from "@/lib/action/appointment"
+import { useRouter } from "next/navigation"
 type BadgeVariant = VariantProps<typeof badgeVariants>["variant"]
 
 const appointmentStatusVariants: Record<Appointment["status"], BadgeVariant> = {
@@ -176,17 +178,27 @@ function EmptyAppointments() {
 }
 
 function AppointmentActions({
+  id,
   status,
   payment,
   serviceId,
 }: {
+  id: string,
   status: Appointment["status"]
   payment: Appointment["payment"]
   serviceId?: string
 }) {
+
   const canPayNow = status === "confirmed" && payment === "unpaid"
   const canCancel =
     (status === "cancelled" || status === "pending") && payment === "unpaid"
+  const router = useRouter()
+  const handleCancleAppointment = async () => {
+    const cancelAppointment = await deleteAppointment(id)
+    console.log(cancelAppointment)
+
+    router.refresh()
+  }
   return (
     <div className="flex items-center justify-end gap-2">
       {serviceId ? (
@@ -226,6 +238,7 @@ function AppointmentActions({
 
       {canCancel && (
         <Button
+          onClick={handleCancleAppointment}
           variant="outline"
           size="sm"
           className="h-9 shrink-0 gap-1.5 border-destructive/30 bg-destructive/5 px-3 text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -243,6 +256,8 @@ export function AppointmentTable({
 }: {
   appointments: Appointment[]
 }) {
+
+
   return (
     <Card className="overflow-hidden border-border bg-background">
       <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-6">
@@ -312,6 +327,7 @@ export function AppointmentTable({
                       </TableCell>
                       <TableCell className="min-w-[290px]">
                         <AppointmentActions
+                          id={appointment._id ?? ""}
                           status={appointment.status}
                           payment={appointment.payment}
                           serviceId={appointment.serviceId}
@@ -338,6 +354,7 @@ export function AppointmentTable({
                   </div>
                   <AppointmentDetails appointment={appointment} />
                   <AppointmentActions
+                    id={appointment._id ?? ""}
                     status={appointment.status}
                     payment={appointment.payment}
                     serviceId={appointment.serviceId}

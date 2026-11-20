@@ -4,11 +4,14 @@ import { useEffect, useState, useMemo } from "react"
 import { getServices } from "@/lib/api/services"
 import { ServiceCard } from "@/components/ui/service-card"
 import { Service } from "@/lib/types/service"
-import { Search } from "lucide-react"
+import { AlertCircle, RefreshCw, Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("default")
 
@@ -18,18 +21,24 @@ export default function ServicesPage() {
       .then((data: Service[]) => {
         if (mounted) {
           setServices(data)
+          setError(null)
           setLoading(false)
         }
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (mounted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Unable to load services. Please try again."
+          )
           setLoading(false)
         }
       })
     return () => {
       mounted = false
     }
-  }, [])
+  }, [retryCount])
 
   const categories = useMemo(
     () => ["all", ...Array.from(new Set(services.map((s) => s.category)))],
@@ -52,13 +61,22 @@ export default function ServicesPage() {
     return result
   }, [services, categoryFilter, sortBy])
 
+  const handleRetry = () => {
+    setError(null)
+    setLoading(true)
+    setRetryCount((count) => count + 1)
+  }
+
   if (loading) {
     return (
       <div className="bg-background min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl flex items-center justify-center h-[60vh]">
-          <div className="flex flex-col items-center gap-3">
+        <div className="mx-auto flex h-[60vh] max-w-7xl items-center justify-center">
+          <div className="flex flex-col items-center gap-3 text-center">
             <div className="h-8 w-32 rounded-full bg-secondary animate-pulse" />
             <p className="text-sm text-muted-foreground">Loading services...</p>
+            <p className="text-xs text-muted-foreground">
+              This usually only takes a moment.
+            </p>
           </div>
         </div>
       </div>
@@ -131,11 +149,47 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAndSortedServices.map((service) => (
-            <ServiceCard key={service._id} service={service} />
-          ))}
-        </div>
+        {error ? (
+          <div
+            role="alert"
+            className="flex flex-col items-center rounded-2xl border border-destructive/25 bg-destructive/5 px-6 py-12 text-center"
+          >
+            <AlertCircle className="h-8 w-8 text-destructive" aria-hidden="true" />
+            <h2 className="mt-4 text-lg font-semibold text-foreground">
+              We couldn&apos;t load the services
+            </h2>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
+              {error}
+            </p>
+            <Button
+              onClick={handleRetry}
+              className="mt-5 gap-2"
+              variant="outline"
+            >
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              Try again
+            </Button>
+          </div>
+        ) : filteredAndSortedServices.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredAndSortedServices.map((service) => (
+              <ServiceCard key={service._id} service={service} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-border px-6 py-12 text-center">
+            <h2 className="text-lg font-semibold text-foreground">
+              {services.length === 0
+                ? "No services available yet"
+                : "No services match this category"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {services.length === 0
+                ? "Please check back soon."
+                : "Choose another category to see more services."}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

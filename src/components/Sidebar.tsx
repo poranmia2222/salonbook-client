@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import {
   LayoutDashboard,
@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { authClient, useSession } from "@/lib/auth-client"
+import {signOut, useSession } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 
 interface NavItem {
@@ -69,6 +69,11 @@ export function Sidebar() {
     | undefined
   const isAdmin = user?.role === "admin"
   const navItems = isAdmin ? ADMIN_NAV : CUSTOMER_NAV
+const router = useRouter()
+  const handleSignout=()=>{
+    signOut()
+    router.replace("/sign-in")
+  }
 
   return (
     <aside
@@ -156,9 +161,7 @@ export function Sidebar() {
           </div>
         </div>
         <Button
-          onClick={() => {
-            void authClient.signOut()
-          }}
+          onClick={handleSignout}
           variant="outline"
           size="sm"
           className={cn("w-full mt-2", collapsed && "justify-center px-2")}

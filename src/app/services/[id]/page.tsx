@@ -9,6 +9,7 @@ import {
   Check,
   ChevronLeft,
   Clock3,
+  RefreshCw,
   Star,
 } from "lucide-react"
 import { Suspense, use, useEffect, useState, type FormEvent } from "react"
@@ -58,6 +59,7 @@ function ServiceDetailsContent({
   const [service, setService] = useState<Service | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
   const { data: session } = useSession()
   const { toast } = useToast()
   const user = session?.user as
@@ -92,28 +94,46 @@ function ServiceDetailsContent({
     return () => {
       mounted = false
     }
-  }, [id])
+  }, [id, retryCount])
 
   if (loading) {
     return <ServiceLoading />
   }
 
   if (error || !service) {
+    const isNotFound = error === "Service not found"
+
     return (
       <div className="bg-background min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-foreground mb-2">
-            Service Not Found
+          <h1 className="mb-2 text-2xl font-semibold text-foreground">
+            {isNotFound ? "Service not found" : "Unable to load service"}
           </h1>
           <p className="text-muted-foreground">
             {error || "The service you are looking for does not exist."}
           </p>
-          <Link
-            href="/services"
-            className="mt-4 inline-flex items-center gap-2 text-primary font-medium hover:underline"
-          >
-            <ChevronLeft className="h-4 w-4" /> Back to Services
-          </Link>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            {!isNotFound && (
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => {
+                  setError(null)
+                  setLoading(true)
+                  setRetryCount((count) => count + 1)
+                }}
+              >
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Try again
+              </Button>
+            )}
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+            >
+              <ChevronLeft className="h-4 w-4" /> Back to services
+            </Link>
+          </div>
         </div>
       </div>
     )
