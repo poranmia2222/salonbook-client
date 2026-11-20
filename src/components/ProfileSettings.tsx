@@ -21,23 +21,31 @@ export function ProfileSettings() {
   const [loading, setLoading] = useState(false)
   const [image, setImage] = useState<File | null>(null)
 
-  const uploadImage = async (file: File) => {
-    const formData = new FormData()
-    formData.append("image", file)
+  const uploadImage = async (file: File): Promise<string> => {
+    if (!file.type.startsWith("image/")) {
+      throw new Error("Please select a valid image");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("Image size must be less than 5 MB");
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
 
     const response = await fetch("/api/upload-image", {
       method: "POST",
       body: formData,
-    })
+    });
 
-    const result = await response.json()
+    const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || "Image upload failed")
+      throw new Error(result.message || "Image upload failed");
     }
 
-    return result.imageUrl as string
-  }
+    return result.imageUrl;
+  };
 
   const user = session?.user as unknown as UserProfile
 
@@ -56,37 +64,44 @@ export function ProfileSettings() {
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const nameValue = formData.get("name")
-    const name = typeof nameValue === "string" ? nameValue : ""
-    setLoading(true)
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get("name") || "").trim();
+
+    if (!name) {
+      toast({
+        variant: "destructive",
+        title: "Name required",
+        description: "Please enter your full name.",
+      });
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      let imageUrl = user.image || ""
+      let imageUrl = user.image || "";
 
-      // Upload image only if user selects a new one
       if (image) {
-        imageUrl = await uploadImage(image)
+        imageUrl = await uploadImage(image);
       }
 
-      // Update Better Auth user information
       const { error } = await authClient.updateUser({
         name,
         image: imageUrl,
-      })
+      });
 
       if (error) {
-        throw new Error(error.message || "Profile update failed")
+        throw new Error(error.message || "Profile update failed");
       }
 
-      setImage(null)
+      setImage(null);
 
       toast({
         title: "Profile updated",
         description: "Your profile information has been saved.",
-      })
-
+      });
     } catch (err) {
       toast({
         variant: "destructive",
@@ -95,11 +110,11 @@ export function ProfileSettings() {
           err instanceof Error
             ? err.message
             : "Unable to update profile.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -184,9 +199,8 @@ export function ProfileSettings() {
                   />
                   <label
                     htmlFor="profileImage"
-                    className={`inline-flex h-8 shrink-0 cursor-pointer items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring ${
-                      loading ? "pointer-events-none opacity-50" : ""
-                    }`}
+                    className={`inline-flex h-8 shrink-0 cursor-pointer items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring ${loading ? "pointer-events-none opacity-50" : ""
+                      }`}
                   >
                     Choose file
                   </label>

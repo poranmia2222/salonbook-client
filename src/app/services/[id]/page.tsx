@@ -22,6 +22,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useSession } from "@/lib/auth-client"
+import { useToast } from "@/components/ui/use-toast"
+import { bookAppointment } from "@/lib/action/appointment"
 
 export default function ServiceDetailsPage({
   params,
@@ -31,6 +34,16 @@ export default function ServiceDetailsPage({
   const [service, setService] = useState<Service | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { data: session } = useSession()
+  const { toast } = useToast()
+  const user = session?.user as
+    | {
+        id: string
+        name?: string | null
+        email?: string | null
+        role?: string
+      }
+    | undefined
 
   useEffect(() => {
     let mounted = true
@@ -93,9 +106,65 @@ export default function ServiceDetailsPage({
   const discountPrice = service.discountPrice ?? null
   const showDiscount = discountPrice !== null && discountPrice < service.price
   const effectivePrice = showDiscount ? discountPrice : service.price
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  if (!user) {
+    toast({
+      variant: "destructive",
+      title: "Sign in required",
+      description: "Please sign in before requesting an appointment.",
+    });
+    return;
   }
+
+  if (user.role !== "customer") {
+    toast({
+      variant: "destructive",
+      title: "Customer account required",
+      description: "Only customers can request an appointment.",
+    });
+    return;
+  }
+
+  const formData = new FormData(event.currentTarget);
+  const data = Object.fromEntries(formData.entries());
+
+  // Exclude the service MongoDB _id
+  const { _id, ...serviceData } = service;
+
+  const appointmentData = {
+    ...data,
+    ...serviceData,
+    userId: user.id,
+    userName: user.name,
+    userEmail: user.email,
+    totalPrice: effectivePrice,
+    status: "pending",
+  };
+
+  try {
+    console.log("Appointment payload:", appointmentData);
+
+    await bookAppointment(appointmentData);
+
+    toast({
+      title: "Appointment requested",
+      description: `Your request for ${service.serviceName} has been submitted.`,
+    });
+  } catch (err) {
+    console.error("Appointment submission error:", err);
+
+    toast({
+      variant: "destructive",
+      title: "Request failed",
+      description:
+        err instanceof Error
+          ? err.message
+          : "Unable to request an appointment.",
+    });
+  }
+};
 
   return (
     <div className="bg-background min-h-screen">
@@ -193,84 +262,84 @@ export default function ServiceDetailsPage({
               service.tags?.length > 0 ||
               service.preparation ||
               service.aftercare) && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {service.benefits?.length > 0 && (
-                  <Card className="border-border bg-background">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">Benefits</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-3">
-                        {service.benefits.map((benefit) => (
-                          <li key={benefit} className="flex items-start gap-3">
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                            <span className="text-sm leading-6 text-muted-foreground">
-                              {benefit}
-                            </span>
-                          </li>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {service.benefits?.length > 0 && (
+                    <Card className="border-border bg-background">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">Benefits</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-3">
+                          {service.benefits.map((benefit) => (
+                            <li key={benefit} className="flex items-start gap-3">
+                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                              <span className="text-sm leading-6 text-muted-foreground">
+                                {benefit}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {service.includes?.length > 0 && (
+                    <Card className="border-border bg-background">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">What&rsquo;s included</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-3">
+                          {service.includes.map((item) => (
+                            <li key={item} className="flex items-start gap-3">
+                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                              <span className="text-sm leading-6 text-muted-foreground">
+                                {item}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {service.suitableFor?.length > 0 && (
+                    <Card className="border-border bg-background">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">Suitable for</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex flex-wrap gap-2">
+                        {service.suitableFor.map((item) => (
+                          <span
+                            key={item}
+                            className="rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground"
+                          >
+                            {item}
+                          </span>
                         ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                )}
+                      </CardContent>
+                    </Card>
+                  )}
 
-                {service.includes?.length > 0 && (
-                  <Card className="border-border bg-background">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">What&rsquo;s included</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-3">
-                        {service.includes.map((item) => (
-                          <li key={item} className="flex items-start gap-3">
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                            <span className="text-sm leading-6 text-muted-foreground">
-                              {item}
-                            </span>
-                          </li>
+                  {service.tags?.length > 0 && (
+                    <Card className="border-border bg-background">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">Service tags</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex flex-wrap gap-2">
+                        {service.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
                         ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {service.suitableFor?.length > 0 && (
-                  <Card className="border-border bg-background">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">Suitable for</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2">
-                      {service.suitableFor.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </CardContent>
-                  </Card>
-                )}
-
-                {service.tags?.length > 0 && (
-                  <Card className="border-border bg-background">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">Service tags</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2">
-                      {service.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
 
             {(service.preparation || service.aftercare) && (
               <Card className="border-border bg-background">
