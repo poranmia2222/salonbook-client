@@ -20,6 +20,14 @@ export interface Service {
   tags: string[];
 }
 
-export interface Appointment{
-  
+export interface Appointment extends Service {
+  _id?: string;
+  date: string;
+  time: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  totalPrice: number;
+  status: "pending" | "confirmed" | "cancelled" | "completed";
+  payment: "unpaid" | "paid" 
 }
