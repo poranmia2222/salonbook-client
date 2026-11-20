@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X, Scissors } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { authClient, useSession } from "@/lib/auth-client"
@@ -16,10 +15,14 @@ const navLinks = [
 ]
 
 export function Navbar() {
-  const pathname = usePathname()
+  const [pathname, setPathname] = useState("")
   const { data: session } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isLoggedIn = !!session?.user
+
+  useEffect(() => {
+    setPathname(typeof window !== "undefined" ? window.location.pathname : "")
+  }, [])
 
   return (
     <nav className="relative z-20 w-full border-b border-border bg-background">

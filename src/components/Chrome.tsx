@@ -1,12 +1,15 @@
 "use client"
 
-import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 
 export default function Chrome({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isDashboard = pathname.startsWith("/dashboard")
+  const [isDashboard, setIsDashboard] = useState(false)
+
+  useEffect(() => {
+    setIsDashboard(typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard"))
+  }, [])
 
   return (
     <>
