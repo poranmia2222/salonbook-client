@@ -62,11 +62,11 @@ function ServiceDetailsContent({
   const { toast } = useToast()
   const user = session?.user as
     | {
-        id: string
-        name?: string | null
-        email?: string | null
-        role?: string
-      }
+      id: string
+      name?: string | null
+      email?: string | null
+      role?: string
+    }
     | undefined
 
   useEffect(() => {
@@ -123,65 +123,66 @@ function ServiceDetailsContent({
   const showDiscount = discountPrice !== null && discountPrice < service.price
   const effectivePrice = showDiscount ? discountPrice : service.price
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (!user) {
-    toast({
-      variant: "destructive",
-      title: "Sign in required",
-      description: "Please sign in before requesting an appointment.",
-    });
-    return;
-  }
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Sign in required",
+        description: "Please sign in before requesting an appointment.",
+      });
+      return;
+    }
 
-  if (user.role !== "customer") {
-    toast({
-      variant: "destructive",
-      title: "Customer account required",
-      description: "Only customers can request an appointment.",
-    });
-    return;
-  }
+    if (user.role !== "customer") {
+      toast({
+        variant: "destructive",
+        title: "Customer account required",
+        description: "Only customers can request an appointment.",
+      });
+      return;
+    }
 
-  const formData = new FormData(event.currentTarget);
-  const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
 
-  // Exclude the service MongoDB _id
-  const { _id, ...serviceData } = service;
+    // Exclude the service MongoDB _id
+    const { _id, ...serviceData } = service;
+    const serviceId = _id
+    const appointmentData = {
+      ...data,
+      ...serviceData,
+      serviceId:serviceId,
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      totalPrice: effectivePrice,
+      status: "pending",
+      payment: 'unpaid'
+    };
 
-  const appointmentData = {
-    ...data,
-    ...serviceData,
-    userId: user.id,
-    userName: user.name,
-    userEmail: user.email,
-    totalPrice: effectivePrice,
-    status: "pending",
-    payment: 'unpaid'
+    try {
+      console.log("Appointment payload:", appointmentData);
+
+      await bookAppointment(appointmentData);
+
+      toast({
+        title: "Appointment requested",
+        description: `Your request for ${service.serviceName} has been submitted.`,
+      });
+    } catch (err) {
+      console.error("Appointment submission error:", err);
+
+      toast({
+        variant: "destructive",
+        title: "Request failed",
+        description:
+          err instanceof Error
+            ? err.message
+            : "Unable to request an appointment.",
+      });
+    }
   };
-
-  try {
-    console.log("Appointment payload:", appointmentData);
-
-    await bookAppointment(appointmentData);
-
-    toast({
-      title: "Appointment requested",
-      description: `Your request for ${service.serviceName} has been submitted.`,
-    });
-  } catch (err) {
-    console.error("Appointment submission error:", err);
-
-    toast({
-      variant: "destructive",
-      title: "Request failed",
-      description:
-        err instanceof Error
-          ? err.message
-          : "Unable to request an appointment.",
-    });
-  }
-};
 
   return (
     <div className="bg-background min-h-screen">

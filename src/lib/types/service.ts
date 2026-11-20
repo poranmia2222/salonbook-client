@@ -27,7 +27,9 @@ export interface Appointment extends Service {
   userId: string;
   userName: string;
   userEmail: string;
+  serviceId?: string;
   totalPrice: number;
-  status: "pending" | "confirmed" | "cancelled" | "completed";
-  payment: "unpaid" | "paid" 
+  status: "pending" | "confirmed" | "cancelled"
+  payment: "unpaid" | "paid";
+  createdAt?: string;
 }
