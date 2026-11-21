@@ -226,15 +226,29 @@ function AppointmentActions({
         </Button>
       )}
 
-      {canPayNow && (
-        <Button
-          size="sm"
-          className="h-9 shrink-0 gap-1.5 px-3 shadow-sm shadow-primary/20"
-        >
-          <CreditCard className="h-4 w-4" aria-hidden="true" />
-          Pay now
-        </Button>
-      )}
+      {canPayNow &&
+        (id ? (
+          <Link
+            href={`/checkout?appointmentId=${encodeURIComponent(id)}`}
+            className={buttonVariants({
+              size: "sm",
+              className: "h-9 shrink-0 gap-1.5 px-3 shadow-sm shadow-primary/20",
+            })}
+          >
+            <CreditCard className="h-4 w-4" aria-hidden="true" />
+            Pay now
+          </Link>
+        ) : (
+          <Button
+            size="sm"
+            disabled
+            title="Appointment details are not available"
+            className="h-9 shrink-0 gap-1.5 px-3"
+          >
+            <CreditCard className="h-4 w-4" aria-hidden="true" />
+            Pay now
+          </Button>
+        ))}
 
       {canCancel && (
         <Button
@@ -256,7 +270,6 @@ export function AppointmentTable({
 }: {
   appointments: Appointment[]
 }) {
-
 
   return (
     <Card className="overflow-hidden border-border bg-background">

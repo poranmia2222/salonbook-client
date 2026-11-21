@@ -63,10 +63,28 @@ export const getServiceById = async (id: string): Promise<Service | undefined> =
 }
 
 export async function getMyAppointments(query = ""): Promise<Appointment[]> {
-    const res = await fetch(`${BASE_URL}/appointments?${query}`)
-    return res.json()
+    const path = query ? `appointments?${query}` : "appointments";
+    const appointments = await requestServiceJson<Appointment[]>(path);
+
+    if (!Array.isArray(appointments)) {
+        throw new Error("The appointments server returned an invalid response.");
+    }
+
+    return appointments;
 }
 
+export async function getMyAppointmentForUser(
+    userId: string,
+    appointmentId: string
+): Promise<Appointment | undefined> {
+    const query = new URLSearchParams({ applicantId: userId }).toString();
+    const appointments = await getMyAppointments(query);
+
+    return appointments.find(
+        (appointment) =>
+            appointment._id === appointmentId && appointment.userId === userId
+    );
+}
 
 export async function getAppointment(): Promise<Appointment[]> {
     const appointments = await requestServiceJson<Appointment[]>("appointments");
