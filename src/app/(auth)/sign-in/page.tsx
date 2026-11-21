@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useSession } from "@/lib/auth-client"
@@ -28,9 +28,11 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false)
 
   // If already authenticated, send to their role dashboard
-  if (session?.user) {
-    router.replace("/dashboard")
-  }
+  useEffect(() => {
+    if (session?.user) {
+      router.replace("/dashboard")
+    }
+  }, [session, router])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -57,7 +59,7 @@ export default function SignInPage() {
         title: "Welcome back",
         description: "You have been signed in successfully.",
       })
-      router.push("/")
+      router.push("/dashboard")
     } catch (err) {
       toast({
         variant: "destructive",

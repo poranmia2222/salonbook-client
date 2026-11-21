@@ -4,6 +4,7 @@ import { PaymentSuccess } from "@/components/checkout/success/PaymentSuccess"
 import { getMyAppointmentForUser } from "@/lib/api/services"
 import { getSession } from "@/lib/core/server"
 import { stripe } from "@/lib/stripe"
+import { verifyCheckoutPayment } from "@/lib/action/appointment"
 
 type CheckoutSuccessSearchParams = Promise<{
   session_id?: string | string[]
@@ -68,9 +69,12 @@ export default async function CheckoutSuccessPage({
   ) {
     return <PaymentOutcome status="unavailable" />
   }
-console.log({status,
-    payment_status,
-    payment_intent,customer_email, metadata} )
+  try {
+  await verifyCheckoutPayment(sessionId);
+} catch (error) {
+  console.error("Payment verification error:", error);
+  return <PaymentOutcome status="unavailable" />;
+}
   return (
     <PaymentSuccess
       appointment={appointment}

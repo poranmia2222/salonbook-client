@@ -44,3 +44,32 @@ export const updateAppointment = async (appointmentId: string, status:string) =>
   })
   return res.json()
 }
+
+
+export const verifyCheckoutPayment = async (sessionId: string) => {
+  if (!BASE_URL) {
+    throw new Error("API base URL is not configured");
+  }
+
+  const res = await fetch(`${BASE_URL}/payments/checkout-verify`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ sessionId }),
+    cache: "no-store",
+  });
+
+  const result = await res.json();
+
+  console.log("Payment API response:", result);
+  console.log("Payment API status:", res.status);
+
+  if (!res.ok) {
+    throw new Error(
+      result.message || `Payment verification failed (${res.status})`
+    );
+  }
+
+  return result;
+};
