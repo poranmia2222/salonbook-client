@@ -62,6 +62,32 @@ export const getServiceById = async (id: string): Promise<Service | undefined> =
     return requestServiceJson<Service>(`services/${encodeURIComponent(id)}`, true);
 }
 
+export async function createService(service: Omit<Service, "_id">): Promise<Service> {
+    const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+    if (!baseUrl) {
+        throw new Error("The services API URL is not configured.");
+    }
+
+    const response = await fetch(`${baseUrl}/services`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(service),
+        cache: "no-store",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message || `Unable to add the service (${response.status}).`
+        );
+    }
+
+    return result as Service;
+}
+
 export async function getMyAppointments(query = ""): Promise<Appointment[]> {
     const path = query ? `appointments?${query}` : "appointments";
     const appointments = await requestServiceJson<Appointment[]>(path);

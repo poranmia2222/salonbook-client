@@ -45,7 +45,7 @@ const ADMIN_NAV: NavItem[] = [
     icon: Shield,
   },
   {
-    href: "/dashboard/admin/services/add",
+    href: "/dashboard/admin/add-service",
     label: "Add/Update Service",
     icon: Plus,
   },
