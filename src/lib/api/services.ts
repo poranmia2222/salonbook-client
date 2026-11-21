@@ -174,3 +174,15 @@ export async function getAppointment(): Promise<Appointment[]> {
 
     return appointments;
 }
+
+export async function getUsers() {
+  const res = await fetch(`${BASE_URL}/users`, {
+    cache: "no-store",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch users")
+  }
+
+  return res.json()
+}

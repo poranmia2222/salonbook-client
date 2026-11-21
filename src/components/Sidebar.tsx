@@ -54,7 +54,7 @@ const ADMIN_NAV: NavItem[] = [
     label: "Manage Appointments",
     icon: Calendar,
   },
-  { href: "/dashboard/admin/users", label: "Manage Users", icon: Users },
+  { href: "/dashboard/admin/manage-users", label: "Manage Users", icon: Users },
   { href: "/dashboard/admin/transactions", label: "Transactions", icon: CreditCard },
   { href: "/dashboard/admin/profile", label: "My Profile", icon: User },
 ]
