@@ -44,22 +44,31 @@ export default function ServicesPage() {
     () => ["all", ...Array.from(new Set(services.map((s) => s.category)))],
     [services]
   )
+  const [search, setSearch] = useState("")
+const filteredAndSortedServices = useMemo(() => {
+  const query = search.trim().toLowerCase()
 
-  const filteredAndSortedServices = useMemo(() => {
-    let result = services
+  let result = services.filter((service) => {
+    const matchesSearch =
+      !query ||
+      (service.name || "").toLowerCase().includes(query) ||
+      (service.category || "").toLowerCase().includes(query) ||
+      (service.description || "").toLowerCase().includes(query)
 
-    if (categoryFilter !== "all") {
-      result = result.filter((s) => s.category === categoryFilter)
-    }
+    const matchesCategory =
+      categoryFilter === "all" || service.category === categoryFilter
 
-    if (sortBy === "price-low") {
-      result = [...result].sort((a, b) => a.price - b.price)
-    } else if (sortBy === "price-high") {
-      result = [...result].sort((a, b) => b.price - a.price)
-    }
+    return matchesSearch && matchesCategory
+  })
 
-    return result
-  }, [services, categoryFilter, sortBy])
+  if (sortBy === "price-low") {
+    result = [...result].sort((a, b) => a.price - b.price)
+  } else if (sortBy === "price-high") {
+    result = [...result].sort((a, b) => b.price - a.price)
+  }
+
+  return result
+}, [services, categoryFilter, sortBy, search])
 
   const handleRetry = () => {
     setError(null)
@@ -108,6 +117,8 @@ export default function ServicesPage() {
               <input
                 id="service-search"
                 type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search services..."
                 className="h-11 w-full rounded-lg border border-input bg-background px-3 pl-10 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />

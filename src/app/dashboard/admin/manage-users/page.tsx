@@ -1,15 +1,25 @@
+import { redirect } from "next/navigation"
+import { ManageUsersTable } from "@/components/dashboard/admin/ManageUsersTable"
+import { getUsers } from "@/lib/api/services"
+import { getSession } from "@/lib/core/server"
 
-import { getUsers } from '@/lib/api/services';
-import React from 'react';
+export default async function ManageUsersPage() {
+  const session = await getSession()
 
-const ManageUsersPage = async () => {
-    const users = await getUsers()
-    console.log(users)
-    return (
-        <div>
-            <h1>manage users</h1>
-        </div>
-    )
-};
+  if (!session) {
+    redirect("/sign-in")
+  }
 
-export default ManageUsersPage;
+  const role = (session.user as typeof session.user & { role?: string }).role
+  if (role !== "admin") {
+    redirect("/dashboard/customer")
+  }
+
+  const users = await getUsers()
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <ManageUsersTable users={users} />
+    </div>
+  )
+}

@@ -20,6 +20,22 @@ export interface Service {
   tags: string[];
 }
 
+export interface User {
+  _id: string;
+  id?: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
+  role: "admin" | "customer" | string;
+  blocked?: boolean;
+  banned?: boolean;
+  banReason?: string | null;
+  banExpires?: string | Date | null;
+}
+
 export interface Appointment extends Service {
   _id?: string;
   date: string;

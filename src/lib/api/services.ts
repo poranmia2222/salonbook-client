@@ -1,4 +1,4 @@
-import { Appointment, Service } from "../types/service";
+import { Appointment, Service, User } from "../types/service";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const SERVICE_REQUEST_TIMEOUT_MS = 15_000;
@@ -175,7 +175,7 @@ export async function getAppointment(): Promise<Appointment[]> {
     return appointments;
 }
 
-export async function getUsers() {
+export async function getUsers(): Promise<User[]> {
   const res = await fetch(`${BASE_URL}/users`, {
     cache: "no-store",
   })
@@ -184,5 +184,9 @@ export async function getUsers() {
     throw new Error("Failed to fetch users")
   }
 
-  return res.json()
+  const users = await res.json()
+  if (!Array.isArray(users)) {
+    throw new Error("The users server returned an invalid response.")
+  }
+  return users as User[]
 }
