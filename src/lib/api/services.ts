@@ -1,3 +1,5 @@
+'use server'
+import { authFetch, getSession, protectedMutation } from "../core/server";
 import { Appointment, Service, User } from "../types/service";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -58,31 +60,51 @@ export const getServices = async (query = ""): Promise<Service[]> => {
 
     return services;
 }
+
 export const getServiceById = async (id: string): Promise<Service | undefined> => {
     return requestServiceJson<Service>(`services/${encodeURIComponent(id)}`, true);
 }
 
 export async function createService(service: Omit<Service, "_id">): Promise<Service> {
+    const session = await getSession();
+    const role = session
+        ? (session.user as typeof session.user & { role?: string }).role
+        : undefined;
+
+    if (!session?.user.id || role !== "admin") {
+        throw new Error("Only administrators can add services.");
+    }
+
     const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
     if (!baseUrl) {
         throw new Error("The services API URL is not configured.");
     }
 
-    const response = await fetch(`${baseUrl}/services`, {
+    const response = await authFetch(`${baseUrl}/services`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(service),
-        cache: "no-store",
     });
 
-    const result = await response.json();
+    const result: unknown = await response.json().catch(() => undefined);
 
     if (!response.ok) {
+        const message =
+            typeof result === "object" &&
+                result !== null &&
+                "message" in result &&
+                typeof result.message === "string"
+                ? result.message
+                : `Unable to add the service (${response.status}).`;
         throw new Error(
-            result.message || `Unable to add the service (${response.status}).`
+            message
         );
+    }
+
+    if (typeof result !== "object" || result === null) {
+        throw new Error("The services server returned an invalid response.");
     }
 
     return result as Service;
@@ -96,18 +118,8 @@ export async function updateService(
     if (!baseUrl) {
         throw new Error("The services API URL is not configured.");
     }
-
-    const response = await fetch(
-        `${baseUrl}/services/${encodeURIComponent(serviceId)}`,
-        {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(service),
-            cache: "no-store",
-        }
-    );
+    const api = `${baseUrl}/services/${encodeURIComponent(serviceId)}`;
+    const response = await protectedMutation(api, "PATCH", service)
 
     const result = await response.json();
     if (!response.ok) {
@@ -120,18 +132,22 @@ export async function updateService(
 }
 
 export async function deleteService(serviceId: string): Promise<void> {
+    const session = await getSession();
+    const role = session
+        ? (session.user as typeof session.user & { role?: string }).role
+        : undefined;
+
+    if (!session?.user.id || role !== "admin") {
+        throw new Error("Only administrators can delete services.");
+    }
+
     const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
     if (!baseUrl) {
         throw new Error("The services API URL is not configured.");
     }
 
-    const response = await fetch(
-        `${baseUrl}/services/${encodeURIComponent(serviceId)}`,
-        {
-            method: "DELETE",
-            cache: "no-store",
-        }
-    );
+    const api = `${baseUrl}/services/${encodeURIComponent(serviceId)}`;
+    const response = await protectedMutation(api, "DELETE");
 
     if (!response.ok) {
         const result = await response.json().catch(() => null);
@@ -142,8 +158,27 @@ export async function deleteService(serviceId: string): Promise<void> {
 }
 
 export async function getMyAppointments(query = ""): Promise<Appointment[]> {
+    const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+    if (!baseUrl) {
+        throw new Error("The services API URL is not configured.");
+    }
+
     const path = query ? `appointments?${query}` : "appointments";
-    const appointments = await requestServiceJson<Appointment[]>(path);
+    const response = await authFetch(`${baseUrl}/${path}`);
+
+    if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(
+            result?.message || `The appointments request failed (${response.status}).`
+        );
+    }
+
+    let appointments: unknown;
+    try {
+        appointments = await response.json();
+    } catch {
+        throw new Error("The appointments server returned an invalid response.");
+    }
 
     if (!Array.isArray(appointments)) {
         throw new Error("The appointments server returned an invalid response.");
@@ -166,27 +201,20 @@ export async function getMyAppointmentForUser(
 }
 
 export async function getAppointment(): Promise<Appointment[]> {
-    const appointments = await requestServiceJson<Appointment[]>("appointments");
-
-    if (!Array.isArray(appointments)) {
-        throw new Error("The appointments server returned an invalid response.");
-    }
-
-    return appointments;
+    return getMyAppointments();
 }
 
 export async function getUsers(): Promise<User[]> {
-  const res = await fetch(`${BASE_URL}/users`, {
-    cache: "no-store",
-  })
+    const api = `${BASE_URL}/users`
+    const res = await authFetch(api)
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch users")
-  }
+    if (!res.ok) {
+        throw new Error("Failed to fetch users")
+    }
 
-  const users = await res.json()
-  if (!Array.isArray(users)) {
-    throw new Error("The users server returned an invalid response.")
-  }
-  return users as User[]
+    const users = await res.json()
+    if (!Array.isArray(users)) {
+        throw new Error("The users server returned an invalid response.")
+    }
+    return users as User[]
 }

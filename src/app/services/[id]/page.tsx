@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSession } from "@/lib/auth-client"
 import { useToast } from "@/components/ui/use-toast"
-import { bookAppointment } from "@/lib/action/appointment"
+import { bookAppointment } from "@/lib/action/book-appointment"
 
 function ServiceLoading() {
   return (

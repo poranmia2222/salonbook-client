@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Check, Image as ImageIcon, Lock, Mail, User, X as XIcon } from "lucide-react"
-import { signUp } from "@/lib/auth-client"
+import { signIn, signUp } from "@/lib/auth-client"
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -92,12 +92,15 @@ export default function SignUpPage() {
     }
   }
 
-  const handleGoogleSignIn = () => {
-    toast({
-      title: "Google sign up",
-      description: "Google authentication is being configured.",
-    })
-  }
+  const handleGoogleSignIn = async() => {
+      await signIn.social({
+        provider: "google",
+      })
+      toast({
+        title: "Google sign in",
+        description: "Google authentication is being configured.",
+      })
+    }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-background px-4 py-8">

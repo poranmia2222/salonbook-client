@@ -1,45 +1,43 @@
+"use server";
+
+import { protectedMutation } from "../core/server";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function bookAppointment(data: Record<string, unknown>) {
-  if (!BASE_URL) {
+export const deleteAppointment = async (appointmentId: string) => {
+  const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+  if (!baseUrl) {
     throw new Error("API base URL is not configured");
   }
 
-  const res = await fetch(`${BASE_URL}/appointment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const result = await res.json();
-
+  const api = `${baseUrl}/appointment/${encodeURIComponent(appointmentId)}`;
+  const res = await protectedMutation(api, "DELETE");
   if (!res.ok) {
+    const result = await res.json().catch(() => null);
     throw new Error(
-      result.message || `Appointment request failed (${res.status})`
+      result?.message || `Unable to delete the appointment (${res.status}).`
     );
   }
 
-  return result;
-}
-
-
-export const deleteAppointment = async (appointmentId: string) => {
-  const res = await fetch(`${BASE_URL}/appointment/${appointmentId}`, {
-    method: "DELETE"
-  })
   return res.json()
 }
 
+
 export const updateAppointment = async (appointmentId: string, status:string) =>{
-  const res = await fetch(`${BASE_URL}/appointment/${appointmentId}`,{
-    method: "PATCH",
-    headers:{
-      "Content-Type":'application/json'
-    },
-    body:JSON.stringify({status})
-  })
+  const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+  if (!baseUrl) {
+    throw new Error("API base URL is not configured");
+  }
+
+  const api = `${baseUrl}/appointment/${encodeURIComponent(appointmentId)}`;
+  const res = await protectedMutation(api, "PATCH", { status });
+  if (!res.ok) {
+    const result = await res.json().catch(() => null);
+    throw new Error(
+      result?.message || `Unable to update the appointment (${res.status}).`
+    );
+  }
+
   return res.json()
 }
 

@@ -71,7 +71,10 @@ export default function SignInPage() {
     }
   }
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async() => {
+    await signIn.social({
+      provider: "google",
+    })
     toast({
       title: "Google sign in",
       description: "Google authentication is being configured.",
