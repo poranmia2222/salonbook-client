@@ -7,7 +7,6 @@ import {
   Clock3,
   CreditCard,
   Eye,
-  MessageSquareText,
   Scissors,
   UserRound,
   X,
@@ -223,50 +222,6 @@ function DetailsToggle({
   )
 }
 
-function StatusActions({ status }: { status: Appointment["status"] }) {
-  const canConfirm = status === "pending"
-  const canCancel = status === "pending" || status === "confirmed"
-  const actionHelp =
-    "Status changes will be available when the appointment API supports updates."
-
-  const handleCofirm = async () => {
-    const update = updateAppointment()
-  }
-  const handleCancel = () => {
-
-  }
-
-  return (
-    <div className="flex items-center gap-2">
-      {canConfirm && (
-        <Button
-          onClick={handleCofirm}
-          type="button"
-          size="sm"
-          title={actionHelp}
-          className="gap-1.5"
-        >
-          <Check className="h-4 w-4" aria-hidden="true" />
-          Confirm
-        </Button>
-      )}
-      {canCancel && (
-        <Button
-          onClick={handleCancel}
-          type="button"
-          variant="outline"
-          size="sm"
-          title={actionHelp}
-          className="gap-1.5 border-destructive/30 text-destructive"
-        >
-          <X className="h-4 w-4" aria-hidden="true" />
-          Cancel
-        </Button>
-      )}
-    </div>
-  )
-}
-
 function EmptyAppointments() {
   return (
     <div className="flex flex-col items-center px-6 py-14 text-center">
@@ -298,13 +253,11 @@ export function AdminAppointmentTable({
       "Status changes will be available when the appointment API supports updates."
 
     const handleCofirm = async () => {
-      const update = updateAppointment(id, status = "confirmed")
-      console.log(update)
+      await updateAppointment(id, "confirmed")
       router.refresh()
     }
-    const handleCancel = () => {
-      const update = updateAppointment(id, status = "cancelled")
-      console.log(update)
+    const handleCancel = async () => {
+      await updateAppointment(id, "cancelled")
       router.refresh()
     }
 

@@ -10,8 +10,8 @@ import {
 const navigationLinks = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Browse services" },
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/about", label: "About us" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#about", label: "About us" },
 ]
 
 const socialLinks = [

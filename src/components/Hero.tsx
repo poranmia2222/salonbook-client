@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Clock3, Sparkles, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -32,9 +32,10 @@ export function Hero() {
 
   return (
     <section className="relative w-full overflow-hidden bg-background">
+      <div className="pointer-events-none absolute left-[-10rem] top-20 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
       <div className="mx-auto w-full max-w-[1180px] px-5 sm:px-6">
         <div
-          className="grid min-h-[688px] grid-cols-1 items-center gap-10 py-12 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-16"
+          className="grid min-h-[620px] grid-cols-1 items-center gap-10 py-12 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-12"
         >
           {/* Left: Content */}
           <div className="flex flex-col justify-center lg:py-4">
@@ -69,7 +70,7 @@ export function Hero() {
                 Browse Services <ArrowRight className="h-5 w-5" />
               </Button>
               <Link
-                href="/about"
+                href="/#about"
                 className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               >
                 Learn more
@@ -97,10 +98,11 @@ export function Hero() {
           <div className="relative flex items-center justify-center lg:justify-end">
             <div
               className={cn(
-                "relative w-full max-w-[480px] overflow-hidden rounded-xl border border-border",
+                "relative w-full max-w-[480px] overflow-hidden rounded-2xl border border-border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)]",
                 "aspect-[4/5]"
               )}
             >
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/35 via-transparent to-white/5" />
               <div className="relative h-full w-full">
                 {images.map((src, i) => (
                   <Image
@@ -137,6 +139,23 @@ export function Hero() {
                   ))}
                 </div>
               </div>
+            </div>
+
+            <div className="absolute bottom-5 left-2 z-30 hidden rounded-xl border border-white/10 bg-black/70 p-3 shadow-xl backdrop-blur-md sm:block lg:left-[-2rem]">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Star className="h-4 w-4 fill-current" aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-white">4.9 client rating</p>
+                  <p className="mt-0.5 text-xs text-white/60">Trusted salon care</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-3 top-5 z-30 hidden items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-2 text-xs text-white backdrop-blur-md sm:flex">
+              <Clock3 className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+              Easy online booking
             </div>
           </div>
         </div>

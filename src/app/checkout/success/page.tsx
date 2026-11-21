@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 import { PaymentOutcome } from "@/components/checkout/success/PaymentOutcome"
 import { PaymentSuccess } from "@/components/checkout/success/PaymentSuccess"
 import { getMyAppointmentForUser } from "@/lib/api/services"
@@ -10,7 +11,19 @@ type CheckoutSuccessSearchParams = Promise<{
   session_id?: string | string[]
 }>
 
-export default async function CheckoutSuccessPage({
+export default function CheckoutSuccessPage({
+  searchParams,
+}: {
+  searchParams: CheckoutSuccessSearchParams
+}) {
+  return (
+    <Suspense fallback={<PaymentOutcome status="pending" />}>
+      <CheckoutSuccessContent searchParams={searchParams} />
+    </Suspense>
+  )
+}
+
+async function CheckoutSuccessContent({
   searchParams,
 }: {
   searchParams: CheckoutSuccessSearchParams
@@ -34,13 +47,6 @@ export default async function CheckoutSuccessPage({
   }
 
   const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId)
-  const {
-  status,
-  payment_status,
-  customer_email,
-  payment_intent,
-  metadata,
-} = checkoutSession
   const appointmentId = checkoutSession.metadata?.appointmentId
   if (
     !appointmentId ||

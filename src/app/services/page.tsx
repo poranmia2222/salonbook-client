@@ -1,19 +1,22 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { Suspense, useEffect, useState, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { getServices } from "@/lib/api/services"
 import { ServiceCard } from "@/components/ui/service-card"
 import { Service } from "@/lib/types/service"
 import { AlertCircle, RefreshCw, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export default function ServicesPage() {
+function ServicesContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
-  const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("default")
+  const categoryFilter = searchParams.get("category") || "all"
 
   useEffect(() => {
     let mounted = true
@@ -51,7 +54,7 @@ const filteredAndSortedServices = useMemo(() => {
   let result = services.filter((service) => {
     const matchesSearch =
       !query ||
-      (service.name || "").toLowerCase().includes(query) ||
+      (service.serviceName || "").toLowerCase().includes(query) ||
       (service.category || "").toLowerCase().includes(query) ||
       (service.description || "").toLowerCase().includes(query)
 
@@ -132,7 +135,15 @@ const filteredAndSortedServices = useMemo(() => {
             <select
               id="service-category"
               value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
+              onChange={(event) => {
+                const params = new URLSearchParams(searchParams.toString())
+                if (event.target.value === "all") {
+                  params.delete("category")
+                } else {
+                  params.set("category", event.target.value)
+                }
+                router.push(params.size ? `/services?${params.toString()}` : "/services")
+              }}
               className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-sm transition-colors [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {categories.map((cat) => (
@@ -203,5 +214,21 @@ const filteredAndSortedServices = useMemo(() => {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-background min-h-screen py-10">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="h-8 w-48 animate-pulse rounded bg-secondary" />
+          </div>
+        </div>
+      }
+    >
+      <ServicesContent />
+    </Suspense>
   )
 }
