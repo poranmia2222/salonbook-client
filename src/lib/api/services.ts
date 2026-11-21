@@ -88,6 +88,59 @@ export async function createService(service: Omit<Service, "_id">): Promise<Serv
     return result as Service;
 }
 
+export async function updateService(
+    serviceId: string,
+    service: Partial<Service>
+): Promise<Service> {
+    const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+    if (!baseUrl) {
+        throw new Error("The services API URL is not configured.");
+    }
+
+    const response = await fetch(
+        `${baseUrl}/services/${encodeURIComponent(serviceId)}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(service),
+            cache: "no-store",
+        }
+    );
+
+    const result = await response.json();
+    if (!response.ok) {
+        throw new Error(
+            result.message || `Unable to update the service (${response.status}).`
+        );
+    }
+
+    return result as Service;
+}
+
+export async function deleteService(serviceId: string): Promise<void> {
+    const baseUrl = BASE_URL?.trim().replace(/\/+$/, "");
+    if (!baseUrl) {
+        throw new Error("The services API URL is not configured.");
+    }
+
+    const response = await fetch(
+        `${baseUrl}/services/${encodeURIComponent(serviceId)}`,
+        {
+            method: "DELETE",
+            cache: "no-store",
+        }
+    );
+
+    if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        throw new Error(
+            result?.message || `Unable to delete the service (${response.status}).`
+        );
+    }
+}
+
 export async function getMyAppointments(query = ""): Promise<Appointment[]> {
     const path = query ? `appointments?${query}` : "appointments";
     const appointments = await requestServiceJson<Appointment[]>(path);

@@ -40,7 +40,7 @@ const CUSTOMER_NAV: NavItem[] = [
 const ADMIN_NAV: NavItem[] = [
   { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
   {
-    href: "/dashboard/admin/services",
+    href: "/dashboard/admin/manage-service",
     label: "Manage Services",
     icon: Shield,
   },
