@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Lock, Mail } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react"
 import { signIn } from "@/lib/auth-client"
 
 export default function SignInPage() {
@@ -25,6 +25,7 @@ export default function SignInPage() {
   const { toast } = useToast()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [passwordVisible, setPasswordVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
   // If already authenticated, send to their role dashboard
@@ -120,14 +121,29 @@ export default function SignInPage() {
                 />
                 <Input
                   id="password"
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   name="password"
                   placeholder="••••••••"
-                  className="pl-10"
+                  className="pl-10 pr-10"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   disabled={loading}
                 />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  onClick={() => setPasswordVisible((visible) => !visible)}
+                  aria-label={passwordVisible ? "Hide password" : "Show password"}
+                  aria-pressed={passwordVisible}
+                  aria-controls="password"
+                  disabled={loading}
+                >
+                  {passwordVisible ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
               </div>
             </div>
             <Button type="submit" className="h-11 w-full" disabled={loading}>

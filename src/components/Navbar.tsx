@@ -162,8 +162,8 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block text-sm font-medium px-3 py-2.5 rounded-md ${
                     isActiveLink(link.href)
-                      ? "bg-secondary text-primary-foreground"
-                      : "text-primary hover:bg-secondary hover:text-primary-foreground"
+                      ? "bg-secondary text-secondary-foreground"
+                      : "text-primary hover:bg-secondary hover:text-secondary-foreground"
                   }`}
                 >
                   {link.label}

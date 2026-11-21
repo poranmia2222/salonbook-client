@@ -23,7 +23,7 @@ interface ServiceDetailsSectionProps {
 }
 
 const fieldClass =
-  "mt-2 min-h-11 rounded-lg border-border bg-background text-foreground placeholder:text-muted-foreground [color-scheme:dark]"
+  "mt-2 min-h-11 rounded-lg border-border bg-background text-foreground placeholder:text-muted-foreground"
 
 export function ServiceDetailsSection({
   values,

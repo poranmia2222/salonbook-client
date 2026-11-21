@@ -123,7 +123,7 @@ export function UserTableActions({ user }: UserTableActionsProps) {
           size="sm"
           onClick={handleUnblockUser}
           disabled={loading}
-          className="gap-1.5 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
+          className="gap-1.5 border-emerald-500/30 text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
           aria-label={`Unblock ${user.name}`}
         >
           {loading ? (

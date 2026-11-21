@@ -112,7 +112,7 @@ export function ManageServiceTable({
             id="category-filter"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
-            className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {categories.map((item) => (
               <option

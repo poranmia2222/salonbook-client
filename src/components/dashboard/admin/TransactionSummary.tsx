@@ -52,21 +52,21 @@ export function TransactionSummary({
       value: paidTransactions.length,
       description: formatCurrency(paidAmount),
       icon: CircleDollarSign,
-      tone: "bg-emerald-500/10 text-emerald-300",
+      tone: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
     },
     {
       title: "Unpaid",
       value: unpaidTransactions.length,
       description: formatCurrency(unpaidAmount),
       icon: CreditCard,
-      tone: "bg-amber-500/10 text-amber-300",
+      tone: "bg-amber-500/10 text-amber-800 dark:text-amber-300",
     },
     {
       title: "Collected",
       value: formatCurrency(paidAmount),
       description: "Successfully paid",
       icon: WalletCards,
-      tone: "bg-blue-500/10 text-blue-400",
+      tone: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
     },
   ]
 

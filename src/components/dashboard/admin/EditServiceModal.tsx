@@ -255,7 +255,7 @@ export function EditServiceModal({
               value={values.description}
               onChange={(event) => handleChange("description", event.target.value)}
               rows={4}
-              className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               required
             />
           </div>
@@ -271,7 +271,7 @@ export function EditServiceModal({
                 min="1"
                 value={values.duration}
                 onChange={(event) => handleChange("duration", event.target.value)}
-                className="mt-2 [color-scheme:dark]"
+                className="mt-2"
                 required
               />
             </div>
@@ -285,7 +285,7 @@ export function EditServiceModal({
                 min="0"
                 value={values.price}
                 onChange={(event) => handleChange("price", event.target.value)}
-                className="mt-2 [color-scheme:dark]"
+                className="mt-2"
                 required
               />
             </div>
@@ -299,7 +299,7 @@ export function EditServiceModal({
                 min="0"
                 value={values.discountPrice}
                 onChange={(event) => handleChange("discountPrice", event.target.value)}
-                className="mt-2 [color-scheme:dark]"
+                className="mt-2"
               />
             </div>
           </div>

@@ -81,7 +81,7 @@ export function AvatarDropdown() {
         sideOffset={8}
         className="w-48 border border-border bg-secondary p-1.5 shadow-2xl"
       >
-        <DropdownMenuGroup className="p-0 text-white">
+        <DropdownMenuGroup className="p-0 text-secondary-foreground">
           <DropdownMenuItem className="cursor-pointer px-3 py-2">
 
             <h2>{session?.user.name}</h2>

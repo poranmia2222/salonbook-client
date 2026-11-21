@@ -104,7 +104,7 @@ export function TransactionTable({
               id="payment-filter"
               value={paymentFilter}
               onChange={(event) => setPaymentFilter(event.target.value)}
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="all" className="bg-background text-foreground">
                 All payments

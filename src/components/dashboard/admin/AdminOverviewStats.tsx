@@ -32,14 +32,14 @@ export function AdminOverviewStats({
       value: appointmentsCount,
       description: "All booking requests",
       icon: CalendarDays,
-      tone: "bg-blue-500/10 text-blue-400",
+      tone: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
     },
     {
       title: "Pending",
       value: pendingCount,
       description: "Waiting for review",
       icon: Clock3,
-      tone: "bg-amber-500/10 text-amber-300",
+      tone: "bg-amber-500/10 text-amber-800 dark:text-amber-300",
     },
     {
       title: "Paid revenue",
@@ -49,7 +49,7 @@ export function AdminOverviewStats({
       }).format(paidRevenue),
       description: "From paid appointments",
       icon: CircleDollarSign,
-      tone: "bg-emerald-500/10 text-emerald-300",
+      tone: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
     },
   ]
 

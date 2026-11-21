@@ -42,7 +42,7 @@ export function ServiceOfferSection({
             value={values.duration}
             onChange={(event) => onChange("duration", event.target.value)}
             placeholder="45"
-            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground [color-scheme:dark]"
+            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground"
           />
           {errors.duration && (
             <p className="mt-1 text-xs text-destructive">{errors.duration}</p>
@@ -60,7 +60,7 @@ export function ServiceOfferSection({
             value={values.price}
             onChange={(event) => onChange("price", event.target.value)}
             placeholder="800"
-            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground [color-scheme:dark]"
+            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground"
           />
           {errors.price && (
             <p className="mt-1 text-xs text-destructive">{errors.price}</p>
@@ -78,7 +78,7 @@ export function ServiceOfferSection({
             value={values.discountPrice}
             onChange={(event) => onChange("discountPrice", event.target.value)}
             placeholder="699"
-            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground [color-scheme:dark]"
+            className="mt-2 h-11 text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -94,7 +94,7 @@ export function ServiceOfferSection({
             onChange={(event) => onChange("preparation", event.target.value)}
             rows={3}
             placeholder="What should the customer do before the appointment?"
-            className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
         <div>
@@ -107,7 +107,7 @@ export function ServiceOfferSection({
             onChange={(event) => onChange("aftercare", event.target.value)}
             rows={3}
             placeholder="How should the customer maintain results?"
-            className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-2 w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
       </div>

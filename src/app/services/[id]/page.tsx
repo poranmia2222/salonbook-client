@@ -177,6 +177,7 @@ function ServiceDetailsContent({
       userName: user.name,
       userEmail: user.email,
       totalPrice: effectivePrice,
+      createdAt: new Date(),
       status: "pending",
       payment: 'unpaid'
     };
@@ -423,7 +424,7 @@ function ServiceDetailsContent({
                     type="date"
                     required
                     disabled={!service.availability}
-                    className="[color-scheme:dark]"
+                    className="text-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -434,7 +435,7 @@ function ServiceDetailsContent({
                     type="time"
                     required
                     disabled={!service.availability}
-                    className="[color-scheme:dark]"
+                    className="text-foreground"
                   />
                 </div>
                 <div className="rounded-lg border border-border bg-background/70 p-3">

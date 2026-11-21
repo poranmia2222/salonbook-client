@@ -27,31 +27,31 @@ const categoryCards = [
     name: "Nails",
     description: "Manicure and nail art",
     icon: Hand,
-    tone: "bg-blue-500/10 text-blue-400",
+    tone: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   },
   {
     name: "Makeup",
     description: "Everyday and occasion looks",
     icon: Palette,
-    tone: "bg-fuchsia-500/10 text-fuchsia-400",
+    tone: "bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-400",
   },
   {
     name: "Spa",
     description: "Massage and relaxation",
     icon: Flower2,
-    tone: "bg-emerald-500/10 text-emerald-400",
+    tone: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
   },
   {
     name: "Skincare",
     description: "Facials and skin treatments",
     icon: Sparkles,
-    tone: "bg-amber-500/10 text-amber-300",
+    tone: "bg-amber-500/10 text-amber-800 dark:text-amber-300",
   },
   {
     name: "Bridal",
     description: "Complete bridal packages",
     icon: Heart,
-    tone: "bg-rose-500/10 text-rose-400",
+    tone: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
   },
 ]
 

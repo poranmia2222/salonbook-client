@@ -22,9 +22,10 @@
 }
 
 :root {
+  color-scheme: light;
   --theme-background: hsl(36 33% 97%);
   --theme-foreground: hsl(248 18% 12%);
-  --theme-primary: hsl(343 78% 54%);
+  --theme-primary: hsl(343 78% 45%);
   --theme-primary-foreground: hsl(0 0% 100%);
   --theme-secondary: hsl(36 25% 92%);
   --theme-secondary-foreground: hsl(248 16% 20%);
@@ -42,6 +43,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --theme-background: hsl(248 22% 7%);
   --theme-foreground: hsl(30 25% 97%);
   --theme-primary: hsl(343 78% 62%);

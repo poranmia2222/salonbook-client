@@ -144,7 +144,7 @@ const filteredAndSortedServices = useMemo(() => {
                 }
                 router.push(params.size ? `/services?${params.toString()}` : "/services")
               }}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-sm transition-colors [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -162,7 +162,7 @@ const filteredAndSortedServices = useMemo(() => {
               id="service-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-sm transition-colors [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="default">Recommended</option>
               <option value="price-low">Price: Low to High</option>

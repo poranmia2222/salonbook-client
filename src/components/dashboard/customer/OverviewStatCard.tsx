@@ -8,9 +8,9 @@ type StatTone = "primary" | "amber" | "emerald" | "blue"
 
 const toneClasses: Record<StatTone, string> = {
   primary: "bg-primary/10 text-primary",
-  amber: "bg-amber-500/10 text-amber-300",
-  emerald: "bg-emerald-500/10 text-emerald-300",
-  blue: "bg-sky-500/10 text-sky-300",
+  amber: "bg-amber-500/10 text-amber-800 dark:text-amber-300",
+  emerald: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  blue: "bg-sky-500/10 text-sky-700 dark:text-sky-300",
 }
 
 interface OverviewStatCardProps {

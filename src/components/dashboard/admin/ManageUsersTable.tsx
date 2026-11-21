@@ -115,7 +115,7 @@ export function ManageUsersTable({ users }: ManageUsersTableProps) {
               id="role-filter"
               value={roleFilter}
               onChange={(event) => setRoleFilter(event.target.value)}
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {roles.map((role) => (
                 <option
