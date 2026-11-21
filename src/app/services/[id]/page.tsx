@@ -142,6 +142,9 @@ function ServiceDetailsContent({
   const discountPrice = service.discountPrice ?? null
   const showDiscount = discountPrice !== null && discountPrice < service.price
   const effectivePrice = showDiscount ? discountPrice : service.price
+  const today = new Date().toLocaleDateString("en-CA", {
+  timeZone: "Asia/Dhaka",
+});
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -422,6 +425,7 @@ function ServiceDetailsContent({
                     id="appointment-date"
                     name="date"
                     type="date"
+                    min={today}
                     required
                     disabled={!service.availability}
                     className="text-foreground"
